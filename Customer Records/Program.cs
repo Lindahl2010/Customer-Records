@@ -12,38 +12,41 @@ namespace Customer_Records
     {
         static void Main(string[] args)
         {
+            //Declarations
             ConsoleKeyInfo keyValue;
             Customer client = new Customer();
-            string userInput;
-            List<String> customerList = new List<String>();
+            List<String> clientList = new List<String>();
+            FileStream file = new FileStream("WriteCustomerRecords.txt", FileMode.Create, FileAccess.Write);
+            StreamWriter writer = new StreamWriter(file);
 
             welcome(out keyValue);
 
             while (keyValue.Key == ConsoleKey.Enter)
             {
-                FileStream file = new FileStream("WriteCustomerRecords.txt", FileMode.Create, FileAccess.Write);
-                StreamWriter writer = new StreamWriter(file);
+
                 Write("ID Number: ");
                 client.idNumber = ReadLine();
                 Write("Name: ");
                 client.name = ReadLine();
                 Write("Balance: ");
                 client.balance = ReadLine();
-                WriteLine("ID Number: {0} Name: {1} Balance: {2}\n", client.idNumber, client.name, client.balance);
-                customerList.Add(client.idNumber);
-                customerList.Add(client.name);
-                customerList.Add(client.balance);
-                foreach (var i in customerList)
+                WriteLine($"ID Number: {client.idNumber} Name: {client.name} Balance: {client.balance}\n");
+                clientList.Add(client.idNumber);
+                clientList.Add(client.name);
+                clientList.Add(client.balance);
+
+                foreach (var i in clientList)
                 {
-                    writer.WriteLine($"{ i} ");
+                    writer.WriteLine($"{i}");
                 }
+
+                restart(out keyValue);
+
                 writer.Close();
                 file.Close();
 
-                restart(out keyValue);
             }
-
-        }
+        }//End of main method
 
         public static void welcome(out ConsoleKeyInfo keyValue)
         {
@@ -63,12 +66,12 @@ namespace Customer_Records
                 welcome(out keyValue);
             }
         }
-        
-        class Customer
-        {
-            public string idNumber { get; set; }
-            public string name { get; set; }
-            public string balance { get; set; }          
-        }
+    }//End of Program Class
+
+    class Customer
+    {
+        public string idNumber { get; set; }
+        public string name { get; set; }
+        public string balance { get; set; }
     }
 }
