@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Customer_Records
 {
@@ -66,6 +67,18 @@ namespace Customer_Records
                 welcome(out keyValue);
             }
         }
+
+        public static void readData()
+        {
+            const string FILE = @"C:\Documents\C#\Customer Records\Customer Records\bin\Debug\WriteCustomerRecords";
+            FileStream file = new FileStream(FILE, FileMode.Create, FileAccess.Read);
+            StreamReader reader = new StreamReader(FILE);
+
+
+
+
+
+        }
     }//End of Program Class
 
     class Customer
@@ -74,4 +87,10 @@ namespace Customer_Records
         public string name { get; set; }
         public string balance { get; set; }
     }
+
+
+
+
+    
+
 }
