@@ -45,7 +45,6 @@ namespace Customer_Records
             writer.Close();
             file.Close();
 
-
             consoleReset(out keyValue);
 
             readData();
@@ -53,18 +52,32 @@ namespace Customer_Records
 
             fileSearch();
 
+            exit();
+
         }//End of main method
 
-        public static void welcome(out ConsoleKeyInfo keyValue)
+        public static void welcome(out ConsoleKeyInfo keyValue) 
         {
+            //Welcome message that outputs a prompt for the user to start the program
             WriteLine("Welcome to the Customer Records Program");
             Write("\nTo start the program, please press Enter or any key to exit...");
             keyValue = ReadKey();
             WriteLine("\nPlease Enter the customer's information below...");
         }
 
+        public static void exit()
+        {
+            //Method to show the end of the program
+            WriteLine("Here is the data that you have entered: ");
+            readData();
+            WriteLine("Thank you for using this program!");
+            Write("Press Enter to exit the program...");
+            ReadLine();
+        }
+
         public static void restart(out ConsoleKeyInfo keyValue, ref List<String> clientList)
         {
+            //Method to restart the while loop if the user wishes to enter additional customers
             Write("\nTo enter another customer's information, please press Enter or any other key to exit...");
             keyValue = ReadKey();
 
@@ -82,7 +95,8 @@ namespace Customer_Records
 
         public static void consoleReset(out ConsoleKeyInfo keyValue)
         {
-            WriteLine("To continue the program, please press Enter or any other key to exit...");
+            //Clears the console after the read method and the search method
+            WriteLine("To continue the program, please press Enter...");
             keyValue = ReadKey();
 
             if (keyValue.Key == ConsoleKey.Enter)
@@ -93,6 +107,8 @@ namespace Customer_Records
 
         public static void readData()
         {
+            //Method to read the data and display it in the console window
+            //Declarations
             const char DELIM = ',';
             const string FILE = "WriteCustomerRecords.txt";
             FileStream file = new FileStream(FILE, FileMode.Open, FileAccess.Read);
@@ -122,6 +138,8 @@ namespace Customer_Records
 
         public static void fileSearch()
         {
+            //Method to ask user to search based on ID Number and then based on minimum balance
+            //Declarations
             const char DELIM = ',';
             const string FILE = "WriteCustomerRecords.txt";
             Customer client = new Customer();
@@ -130,11 +148,12 @@ namespace Customer_Records
             bool advance = true;
             string record, userInput;
             string[] info;
-            int idNumber;
+            int idNumber, minBalance;
 
+            //Loop to search for customers based on ID Number 
             do
             {
-                Write("Please enter the customer ID Number you would like to search: ");
+                Write("Enter the customer ID to find: ");
                 idNumber = Convert.ToInt32(ReadLine());
 
                 WriteLine("\n{0,-5}{1,-15}{2,8}\n", "ID", "Name", "Salary");
@@ -170,6 +189,52 @@ namespace Customer_Records
                 else
                 {
                     advance = false;
+                    Console.Clear();
+                    break;
+                }
+
+            } while (advance);
+
+            //Loop to search for customers based on minimum balance
+            do
+            {
+                Write("Enter minimum balance to find: ");
+                minBalance = Convert.ToInt32(ReadLine());
+
+                WriteLine("\n{0,-5}{1,-15}{2,8}\n", "ID", "Name", "Salary");
+                inFile.Seek(0, SeekOrigin.Begin);
+                record = reader.ReadLine();
+
+                while (record != null)
+                {
+                    info = record.Split(DELIM);
+                    client.idNumber = Convert.ToInt32(info[0]);
+                    client.name = info[1];
+                    client.balance = Convert.ToInt32(info[2]);
+
+                    if (client.balance >= minBalance)
+                    {
+                        WriteLine("{0,-5}{1,-15}{2,8}",
+                            client.idNumber, client.name, client.balance.ToString("C"));
+                    }
+
+                    record = reader.ReadLine();
+
+                }
+
+                Write("\nTo Enter another customer search, enter (Y/N): ");
+                userInput = ReadLine();
+                userInput = userInput.ToUpper();
+
+                if (userInput == "Y")
+                {
+                    advance = true;
+                    Console.Clear();
+                }
+                else
+                {
+                    advance = false;
+                    Console.Clear();
                     break;
                 }
 
@@ -179,6 +244,7 @@ namespace Customer_Records
             inFile.Close();
 
         }
+
     }//End of Program Class
 
     class Customer
@@ -187,10 +253,5 @@ namespace Customer_Records
         public string name { get; set; }
         public int balance { get; set; }
     }
-
-
-
-
-    
 
 }
