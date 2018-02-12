@@ -14,6 +14,7 @@ namespace Customer_Records
         static void Main(string[] args)
         {
             //Declarations
+            const string DELIM = ",";
             ConsoleKeyInfo keyValue;
             Customer client = new Customer();
             List<String> clientList = new List<String>();
@@ -25,67 +26,155 @@ namespace Customer_Records
             while (keyValue.Key == ConsoleKey.Enter)
             {
 
-                Write("ID Number: ");
-                client.idNumber = ReadLine();
+                Write("\nID Number: ");
+                client.idNumber = Convert.ToInt32(ReadLine());
                 Write("Name: ");
                 client.name = ReadLine();
                 Write("Balance: ");
-                client.balance = ReadLine();
+                client.balance = Convert.ToInt32(ReadLine());
                 WriteLine($"ID Number: {client.idNumber} Name: {client.name} Balance: {client.balance}\n");
-                clientList.Add(client.idNumber);
-                clientList.Add(client.name);
-                clientList.Add(client.balance);
+                clientList.Add(client.idNumber + DELIM + client.name + DELIM + client.balance);
 
                 foreach (var i in clientList)
                 {
                     writer.WriteLine($"{i}");
                 }
 
-                restart(out keyValue);
-
-                writer.Close();
-                file.Close();
+                restart(out keyValue, ref clientList);
 
             }
+
+            writer.Close();
+            file.Close();
+
+            Write("Press any key to continue...");
+            ReadLine();
+            Console.Clear();
+
+            readData();
+            ReadLine();
+
+            fileSearch();
+            ReadLine();
+
         }//End of main method
 
         public static void welcome(out ConsoleKeyInfo keyValue)
         {
             WriteLine("Welcome to the Customer Records Program");
-            WriteLine("\nTo start the program, please press Enter or any key to exit...");
+            Write("\nTo start the program, please press Enter or any key to exit...");
             keyValue = ReadKey();
         }
 
-        public static void restart(out ConsoleKeyInfo keyValue)
+        public static void restart(out ConsoleKeyInfo keyValue, ref List<String> clientList)
         {
-            WriteLine("To restart the program, please press Enter or any other key to exit.");
+            Write("To restart the program, please press Enter or any other key to exit.");
             keyValue = ReadKey();
 
             if (keyValue.Key == ConsoleKey.Enter)
             {
+                clientList.Clear();
                 Console.Clear();
                 welcome(out keyValue);
+            }
+            else
+            {
+                Console.Clear();
             }
         }
 
         public static void readData()
         {
-            const string FILE = @"C:\Documents\C#\Customer Records\Customer Records\bin\Debug\WriteCustomerRecords";
-            FileStream file = new FileStream(FILE, FileMode.Create, FileAccess.Read);
+            const char DELIM = ',';
+            const string FILE = "WriteCustomerRecords.txt";
+            FileStream file = new FileStream(FILE, FileMode.Open, FileAccess.Read);
             StreamReader reader = new StreamReader(FILE);
+            Customer client = new Customer();
+            string record;
+            string[] info;
 
+            WriteLine("\n{0,-5}{1,-15}{2,8}\n", "ID", "Name", "Salary");
+            record = reader.ReadLine();
+            while(record != null)
+            {
+                info = record.Split(DELIM);
+                client.idNumber = Convert.ToInt32(info[0]);
+                client.name = info[1];
+                client.balance = Convert.ToInt32(info[2]);
+                WriteLine("{0,-5}{1,-15}{2,8}", 
+                    client.idNumber, client.name, client.balance.ToString("C"));
+                record = reader.ReadLine();
+            }
 
+            reader.Close();
+            file.Close();
 
+        }
 
+        public static void fileSearch()
+        {
+            const char DELIM = ',';
+            const string FILE = "WriteCustomerRecords.txt";
+            Customer client = new Customer();
+            FileStream inFile = new FileStream(FILE, FileMode.Open, FileAccess.Read);
+            StreamReader reader = new StreamReader(inFile);
+            bool advance = true;
+            string record, userInput;
+            string[] info;
+            int idNumber;
+
+            do
+            {
+                Write("Please enter the customer ID Number you would like to search: ");
+                idNumber = Convert.ToInt32(ReadLine());
+
+                WriteLine("\n{0,-5}{1,-15}{2,8}\n", "ID", "Name", "Salary");
+                inFile.Seek(0, SeekOrigin.Begin);
+                record = reader.ReadLine();
+
+                while (record != null)
+                {
+                    info = record.Split(DELIM);
+                    client.idNumber = Convert.ToInt32(info[0]);
+                    client.name = info[1];
+                    client.balance = Convert.ToInt32(info[2]);
+
+                    if (client.idNumber == idNumber)
+                    {
+                        WriteLine("{0,-5}{1,-15}{2,8}",
+                            client.idNumber, client.name, client.balance.ToString("C"));
+                    }
+
+                    record = reader.ReadLine();
+
+                }
+
+                Write("\nTo Enter another customer search, enter (Y/N): ");
+                userInput = ReadLine();
+                userInput = userInput.ToUpper();
+
+                if (userInput == "Y")
+                {
+                    advance = true;
+                }
+                else
+                {
+                    advance = false;
+                }
+
+            } while (advance);
+
+            reader.Close();
+            inFile.Close();
 
         }
     }//End of Program Class
 
     class Customer
     {
-        public string idNumber { get; set; }
+        public int idNumber { get; set; }
         public string name { get; set; }
-        public string balance { get; set; }
+        public int balance { get; set; }
     }
 
 
