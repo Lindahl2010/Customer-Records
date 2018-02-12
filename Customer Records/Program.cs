@@ -25,14 +25,12 @@ namespace Customer_Records
 
             while (keyValue.Key == ConsoleKey.Enter)
             {
-
                 Write("\nID Number: ");
                 client.idNumber = Convert.ToInt32(ReadLine());
                 Write("Name: ");
                 client.name = ReadLine();
                 Write("Balance: ");
                 client.balance = Convert.ToInt32(ReadLine());
-                WriteLine($"ID Number: {client.idNumber} Name: {client.name} Balance: {client.balance}\n");
                 clientList.Add(client.idNumber + DELIM + client.name + DELIM + client.balance);
 
                 foreach (var i in clientList)
@@ -47,15 +45,13 @@ namespace Customer_Records
             writer.Close();
             file.Close();
 
-            Write("Press any key to continue...");
-            ReadLine();
-            Console.Clear();
+
+            consoleReset(out keyValue);
 
             readData();
-            ReadLine();
+            consoleReset(out keyValue);
 
             fileSearch();
-            ReadLine();
 
         }//End of main method
 
@@ -64,20 +60,32 @@ namespace Customer_Records
             WriteLine("Welcome to the Customer Records Program");
             Write("\nTo start the program, please press Enter or any key to exit...");
             keyValue = ReadKey();
+            WriteLine("\nPlease Enter the customer's information below...");
         }
 
         public static void restart(out ConsoleKeyInfo keyValue, ref List<String> clientList)
         {
-            Write("To restart the program, please press Enter or any other key to exit.");
+            Write("\nTo enter another customer's information, please press Enter or any other key to exit...");
             keyValue = ReadKey();
 
             if (keyValue.Key == ConsoleKey.Enter)
             {
                 clientList.Clear();
                 Console.Clear();
-                welcome(out keyValue);
+                WriteLine("Please Enter the customer's information below...");
             }
             else
+            {
+                Console.Clear();
+            }
+        }
+
+        public static void consoleReset(out ConsoleKeyInfo keyValue)
+        {
+            WriteLine("To continue the program, please press Enter or any other key to exit...");
+            keyValue = ReadKey();
+
+            if (keyValue.Key == ConsoleKey.Enter)
             {
                 Console.Clear();
             }
@@ -105,6 +113,7 @@ namespace Customer_Records
                     client.idNumber, client.name, client.balance.ToString("C"));
                 record = reader.ReadLine();
             }
+            Write("\n");
 
             reader.Close();
             file.Close();
@@ -156,10 +165,12 @@ namespace Customer_Records
                 if (userInput == "Y")
                 {
                     advance = true;
+                    Console.Clear();
                 }
                 else
                 {
                     advance = false;
+                    break;
                 }
 
             } while (advance);
